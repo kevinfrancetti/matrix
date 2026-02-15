@@ -1,3 +1,9 @@
+#IDE DI MERDA
+.cproject
+.project
+.settings/
+*.txt
+
 # Prerequisites
 *.d
 
