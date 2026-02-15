@@ -3,6 +3,7 @@
 .project
 .settings/
 *.txt
+test/maintest
 
 # Prerequisites
 *.d
