@@ -4,11 +4,6 @@
 #include<math.h>
 #include<X11/Xlib.h>
 
-#define PI   3.14159265358979323846264338327950288
-#define degToRad(angleInDegrees) ((angleInDegrees) * PI / 180.0)
-#define radToDeg(angleInRadians) ((angleInRadians) * 180.0 / PI)
-
-
 Mat4x4 mat4x4_zero() {
 	Mat4x4 zero;
 	for (int i = 0; i < 16; i++) {
@@ -44,7 +39,7 @@ void mat4x4_print(const Mat4x4 *m) {
 	printf("\n");
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 4; j++) {
-			printf("%.2f\t", *((*m).data + i * 4 + j));
+			printf("%.3f\t", *((*m).data + i * 4 + j));
 		}
 		printf("\n");
 	}
@@ -78,6 +73,23 @@ Mat4x4 mat4x4_mult(Mat4x4 m1, Mat4x4 m2) {
 	return result;
 }
 
+Mat4x4 matnxn_mult(Mat4x4 m1, Mat4x4 m2, int n) {
+	float sum = 0;
+	Mat4x4 result;
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
+			for (int k = 0; k < n; k++) {
+				float row = *(m1.data + i * n + k);
+				float col = *(m2.data + k * n + j);
+				sum += col * row;
+			}
+			*(result.data + i * n + j) = sum;
+			sum = 0;
+		}
+	}
+	return result;
+}
+
 Vec4 mat4x4_vec4_mult(Mat4x4 m, Vec4 v) {
 	Vec4 result;
 	float tmp = 0;
@@ -92,7 +104,16 @@ Vec4 mat4x4_vec4_mult(Mat4x4 m, Vec4 v) {
 	return result;
 }
 
-Mat4x4 mat4x4_transalte(Mat4x4 m, Vec4 v) {
+Mat4x4 mat4x4_translate_simple(Vec4 v) {
+	Mat4x4 trans = mat4x4_identity();
+	trans.data[4 * 1 - 1] = v.x;
+	trans.data[4 * 2 - 1] = v.y;
+	trans.data[4 * 3 - 1] = v.z;
+	trans.data[4 * 4 - 1] = 1;
+	return trans;
+}
+
+Mat4x4 mat4x4_translate_composed(Mat4x4 m, Vec4 v) {
 	Mat4x4 trans = mat4x4_identity();
 	trans.data[4 * 1 - 1] = v.x;
 	trans.data[4 * 2 - 1] = v.y;
@@ -133,6 +154,20 @@ Mat4x4 mat4x4_rotate(Mat4x4 m, Vec4 v, float phi) {
 	return mat4x4_mult(rotate, m);
 }
 
+Mat4x4 mat4x4_projection(float l, float r, float b, float t, float n, float f) {
+	Mat4x4 matrix = mat4x4_zero();
+
+	matrix.data[0] = (2*n)/(r-l);
+	matrix.data[2] = (r+l)/(r-l);
+	matrix.data[5] = (2*n)/(t-b);
+	matrix.data[6] = (t+b)/(t-b);
+	matrix.data[10] = -(f+n)/(f-n);
+	matrix.data[11] = (-2*f*n)/(f-n);
+	matrix.data[14] = -1;
+
+	return matrix;
+}
+
 void test_matrix() {
 	Mat4x4 m1 = mat4x4_identity();
 	mat4x4_print(&m1);
@@ -154,7 +189,7 @@ void test_matrix() {
 	//Mat4x4 trans = mat4x4_transalte(m1, v1);
 	printf("yolo %f\n", degToRad(1));
 	//MAKE THIS UNIT VECT!!!
-	Mat4x4 rot = mat4x4_rotate(m1, rot_axis, degToRad(360*43+90));
+	Mat4x4 rot = mat4x4_rotate(m1, rot_axis, degToRad(360 * 43 + 90));
 	mat4x4_print(&rot);
 	//m2 = mat4x4_transalte(m2, v2);
 	//mat4x4_print(&m2);
@@ -174,7 +209,7 @@ void matrix_print(float *matrix, int rows, int cols, const short printType) {
 
 		for (int i = 0; i < rows; i++) {
 			for (int j = 0; j < cols; j++) {
-				printf("%.2f ", *(matrix + j * cols + i));
+				printf("%.3f ", *(matrix + j * cols + i));
 			}
 			printf("\n");
 		}
@@ -183,7 +218,7 @@ void matrix_print(float *matrix, int rows, int cols, const short printType) {
 
 		for (int i = 0; i < rows; i++) {
 			for (int j = 0; j < cols; j++) {
-				printf("%.2f ", *(matrix + i * cols + j));
+				printf("%.3f ", *(matrix + i * cols + j));
 			}
 			printf("\n");
 		}

@@ -7,11 +7,6 @@ GCC := gcc
 AR := ar
 
 
-
-
-#Names
-LIB_NAME := libkevmatrix.a
-
 #Directory structure
 SRC_DIR := src
 BUILD_DIR := build
@@ -24,6 +19,9 @@ INCLUDE_DIR := include
 TEST_DIR := test
 TEST_TARGET := $(TEST_DIR)/maintest
 
+
+#Names
+LIB_NAME := libkevmatrix.a
 STATIC_LIB_NAME := $(STATIC_LIB_DIR)/$(LIB_NAME)
 
 
@@ -43,21 +41,23 @@ object_files: $(objs)
 
 .PHONY: debug
 debug: CFLAGS += -g
-debug: static_lib
+debug: all
 #debug: $(TEST_TARGET)
 
 .PHONY: create_directory
 create_directory: | $(STATIC_LIB_DIR) $(STATIC_OBJ_DIR) $(SRC_DIR) $(INCLUDE_DIR)
 
+
+#===Test programm for debug==
 .PHONY: test
 test: $(TEST_TARGET)
 
 $(TEST_TARGET): test/maintest.o
-	$(GCC) $^ -L./build/static/lib -lm -lkevmatrix -o $@
+	$(GCC) $^ -L./build/static/lib -lkevmatrix -lm -o $@
 
 test/%.o: test/%.c
 	$(GCC) $(CFLAGS) $< -o $@
-
+#===========================
 
 .PHONY: all
 all: $(STATIC_LIB_NAME) test
