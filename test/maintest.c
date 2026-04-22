@@ -52,7 +52,7 @@ void test_projection() {
 	float t = 100;
 	float n = 1;
 	float f = 100;
-	Mat4x4 m1 = mat4x4_projection(l, r, b, t, n, f);
+	Mat4x4 m1 = mat4x4_perspective_projection(l, r, b, t, n, f);
 	Vec4 v1 = mat4x4_vec4_mult(m1, (Vec4 ) { 1, 1, 1, 1 });
 	Vec4 v2 = mat4x4_vec4_mult(m1, (Vec4 ) { 1, 0, 100, 1 });
 	Vec4 v3 = mat4x4_vec4_mult(m1, (Vec4 ) { 50, -40, -50, 1 });
@@ -64,8 +64,13 @@ void test_projection() {
 	vec_print(&v4);
 
 }
-
+//h
 int main() {
+	Vec4 v;
+	v.x = 1;
+	v.y = 1;
+	v.z = 1;
+	vec4_unit(v);
 	printf("\nYOKLO\n");
 	test_translate();
 	test1();

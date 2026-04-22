@@ -131,9 +131,19 @@ Mat4x4 mat4x4_scale(Mat4x4 m, Vec4 v) {
 	return mat4x4_mult(scale, m);
 }
 
-//MAKE UNIT VEC!!
+Vec4 vec4_unit(Vec4 v) {
+	float modulo = pow(v.x, 2) + pow(v.y, 2) + pow(v.z, 2);
+	modulo = sqrtf(modulo);
+	v.x /= modulo;
+	v.y /= modulo;
+	v.z /= modulo;
+	return v;
+}
+
+
 Mat4x4 mat4x4_rotate(Mat4x4 m, Vec4 v, float phi) {
 	Mat4x4 rotate; // = mat4x4_zero();
+	v = vec4_unit(v);
 	rotate.data[0] = cos(phi) + v.x * v.x * (1 - cos(phi));
 	rotate.data[1] = v.x * v.y * (1 - cos(phi)) - v.z * sin(phi);
 	rotate.data[2] = v.x * v.z * (1 - cos(phi)) + v.y * sin(phi);
@@ -154,16 +164,30 @@ Mat4x4 mat4x4_rotate(Mat4x4 m, Vec4 v, float phi) {
 	return mat4x4_mult(rotate, m);
 }
 
-Mat4x4 mat4x4_projection(float l, float r, float b, float t, float n, float f) {
+Mat4x4 mat4x4_perspective_projection(float l, float r, float b, float t, float n, float f) {
 	Mat4x4 matrix = mat4x4_zero();
 
-	matrix.data[0] = (2*n)/(r-l);
-	matrix.data[2] = (r+l)/(r-l);
-	matrix.data[5] = (2*n)/(t-b);
-	matrix.data[6] = (t+b)/(t-b);
-	matrix.data[10] = -(f+n)/(f-n);
-	matrix.data[11] = (-2*f*n)/(f-n);
+	matrix.data[0] = (2 * n) / (r - l);
+	matrix.data[2] = (r + l) / (r - l);
+	matrix.data[5] = (2 * n) / (t - b);
+	matrix.data[6] = (t + b) / (t - b);
+	matrix.data[10] = -(f + n) / (f - n);
+	matrix.data[11] = (-2 * f * n) / (f - n);
 	matrix.data[14] = -1;
+
+	return matrix;
+}
+
+Mat4x4 mat4x4_orthographic_projection(float l, float r, float b, float t, float n, float f) {
+	Mat4x4 matrix = mat4x4_zero();
+
+	matrix.data[0] = 2 / (r - l);
+	matrix.data[3] = -(r + l) / (r - l);
+	matrix.data[5] = 2 / (t - b);
+	matrix.data[7] = -(t + b) / (t - b);
+	matrix.data[10] = -2 / (f - n);
+	matrix.data[11] = -(f + n) / (f - n);
+	matrix.data[15] = 1;
 
 	return matrix;
 }

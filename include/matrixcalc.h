@@ -28,6 +28,7 @@ typedef struct {
 void matrix_hello();
 void test_matrix();
 void vec_print(const Vec4 *v);
+Vec4 vec4_unit(Vec4 v);
 void mat4x4_print(const Mat4x4 *m);
 Mat4x4 mat4x4_mult(Mat4x4 m1, Mat4x4 m2);
 Mat4x4 matnxn_mult(Mat4x4 m1, Mat4x4 m2, int n);
@@ -40,7 +41,8 @@ Mat4x4 mat4x4_translate_composed(Mat4x4 m, Vec4 v);
 Mat4x4 mat4x4_translate_simple(Vec4 v);
 Mat4x4 mat4x4_scale(Mat4x4 m, Vec4 v);
 Mat4x4 mat4x4_rotate(Mat4x4 m, Vec4 v, float phi);
-Mat4x4 mat4x4_projection(float l, float r, float b, float t, float n, float f);
+Mat4x4 mat4x4_perspective_projection(float l, float r, float b, float t, float n, float f);
+Mat4x4 mat4x4_orthographic_projection(float l, float r, float b, float t, float n, float f);
 
 
 #endif // MATRIXCALC_H
